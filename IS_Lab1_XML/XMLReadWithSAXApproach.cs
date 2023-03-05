@@ -25,8 +25,7 @@ public class XMLReadWithSAXApproach
         // analiza każdego z węzłów dokumentu
         while (reader.Read())
         {
-            if (reader.NodeType == XmlNodeType.Element && reader.Name
-                == "produktLeczniczy")
+            if (reader.NodeType == XmlNodeType.Element && reader.Name == "produktLeczniczy")
             {
                 postac = reader.GetAttribute("postac");
                 sc =
@@ -34,11 +33,12 @@ public class XMLReadWithSAXApproach
                 if (postac == "Krem" && sc == "Mometasoni furoas")
                     count++;
                 if (iloscPostaci.ContainsKey(sc) && !iloscPostaci[sc].Contains(postac)) iloscPostaci[sc].Add(postac);
-                else
+                if (!iloscPostaci.ContainsKey(sc))
                 {
                     iloscPostaci[sc] = new List<string>();
                     iloscPostaci[sc].Add(postac);
-                };
+                }
+
             }
         }
         

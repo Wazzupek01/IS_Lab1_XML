@@ -39,8 +39,7 @@ public class XMLReadWithXLSTDOM
                 nazwy.Add(nazwa);
                 if (nazwa.Contains('\''))
                 {
-                    nazwa = nazwa.Replace("'", "&#39;");
-                    Console.WriteLine(nazwa);
+                    nazwa = nazwa.Replace("'", "&apos;");
 
                 }
                 XPathExpression queryPostaci =
@@ -111,8 +110,8 @@ public class XMLReadWithXLSTDOM
             navigator.Compile("/x:produktyLecznicze/x:produktLeczniczy[@postac='Krem']/@podmiotOdpowiedzialny");
         queryKremy.SetContext(manager);
 
-        var enumeratorKremow = navigator.Select(queryKremy).GetEnumerator()
-            ;
+        var enumeratorKremow = navigator.Select(queryKremy).GetEnumerator();
+
         Dictionary<string, int> iloscKremow = new Dictionary<string, int>();
 
         while (enumeratorKremow.MoveNext())

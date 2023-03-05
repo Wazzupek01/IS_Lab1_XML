@@ -19,10 +19,11 @@ public class XMLReadWithDOMApproach
         {
             postac = d.Attributes.GetNamedItem("postac").Value;
             sc = d.Attributes.GetNamedItem("nazwaPowszechnieStosowana").Value;
+
             if (postac == "Krem" && sc == "Mometasoni furoas")
                 count++;
             if (iloscPostaci.ContainsKey(sc) && !iloscPostaci[sc].Contains(postac)) iloscPostaci[sc].Add(postac);
-            else
+            if (!iloscPostaci.ContainsKey(sc))
             {
                 iloscPostaci[sc] = new List<string>();
                 iloscPostaci[sc].Add(postac);
@@ -87,5 +88,66 @@ public class XMLReadWithDOMApproach
         {
             Console.WriteLine(i+ ". " + maxKremow.ElementAt(i).Key + " " + maxKremow.ElementAt(i).Value);
         }
+    }
+
+    public static void IdentifySingleComponentDrugs(string filepath)
+    {
+        Dictionary<string, List<string>> singleComponentDrugs = ReadDrugsWithSubstanceList(filepath)
+            .Where(l => l.Value.Count == 1)
+            .ToDictionary(l => l.Key, l => l.Value);
+        Console.WriteLine($"Znaleziono {singleComponentDrugs.Count} jednoskładnikowych leków. Czy wyświetlić?(t/n): ");
+        string decision = Console.ReadLine().ToLower();
+        if (decision == "t")
+        {
+            foreach (var l in singleComponentDrugs)
+            {
+                Console.Write(l.Key + " | ");
+                foreach (string s in l.Value) Console.Write(s + " ");
+                Console.WriteLine();
+            }
+        }
+    }
+
+    public static void IdentifyMultiComponentDrugs(string filepath)
+    {
+        Dictionary<string, List<string>> multiComponentDrugs = ReadDrugsWithSubstanceList(filepath)
+            .Where(l => l.Value.Count > 1)
+            .ToDictionary(l => l.Key, l => l.Value);
+        Console.WriteLine($"Znaleziono {multiComponentDrugs.Count} wieloskładnikowych leków. Czy wyświetlić?(t/n): ");
+        string decision = Console.ReadLine().ToLower();
+        if(decision == "t")
+        {
+            foreach (var l in multiComponentDrugs)
+            {
+                Console.Write(l.Key + " | ");
+                foreach (string s in l.Value) Console.Write(s + " ");
+                Console.WriteLine();
+            } 
+        }
+    }
+
+    private static Dictionary<string, List<string>> ReadDrugsWithSubstanceList(string filepath)
+    {
+        XmlDocument doc = new XmlDocument();
+        doc.Load(filepath);
+        string nazwa;
+        var drugs = doc.GetElementsByTagName("produktLeczniczy");
+        Dictionary<string, List<string>> leki = new Dictionary<string, List<string>>();
+        foreach (XmlNode d in drugs)
+        {
+            nazwa = d.Attributes.GetNamedItem("nazwaPowszechnieStosowana").Value;
+            var a = d["substancjeCzynne"].ChildNodes;
+            if (a != null)
+            {
+                leki[nazwa] = new List<string>();
+                foreach (XmlNode i in a)
+                {
+                    if (i.InnerText != null)
+                        leki[nazwa].Add(i.InnerText);
+                }
+            }
+        }
+        Console.WriteLine(leki.Count);
+        return leki;
     }
 }
