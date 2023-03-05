@@ -1,3 +1,4 @@
+using System;
 using System.Xml;
 using System.Xml.XPath;
 
@@ -16,37 +17,47 @@ public class XMLReadWithXLSTDOM
         XPathExpression query =
             navigator.Compile("/x:produktyLecznicze/x:produktLeczniczy[@postac='Krem' and @nazwaPowszechnieStosowana='Mometasoni furoas']");
 
+        query.SetContext(manager);
+        int count = navigator.Select(query).Count;
+
         XPathExpression queryNazwy =
             navigator.Compile("/x:produktyLecznicze/x:produktLeczniczy/@nazwaPowszechnieStosowana");
         
         queryNazwy.SetContext(manager);
+
         var enumerator = navigator.Select(queryNazwy).GetEnumerator();
         int kilkaPostaci = 0;
+
+        List<string> nazwy = new List<string>();
+
         while (enumerator.MoveNext())
         {
             string nazwa = enumerator.Current.ToString();
-            if (nazwa == "Wyciągi alergenowe do testów skórnych Prick'a") break;
-            if (nazwa.Contains('\''))
-            {
-                nazwa.Replace("'", "\\'");
-                Console.WriteLine(nazwa);
-            }
-            XPathExpression queryPostaci =
-                navigator.Compile($"/x:produktyLecznicze/x:produktLeczniczy[@nazwaPowszechnieStosowana='{nazwa}']/@postac");
-            queryPostaci.SetContext(manager);
-            var e = navigator.Select(queryPostaci).GetEnumerator();
-            List<string> postaciPreparatu = new List<string>();
-            while (e.MoveNext())
-            {
-                if (!postaciPreparatu.Contains(e.Current.ToString())) postaciPreparatu.Add(e.Current.ToString());
-            }
 
-            if (postaciPreparatu.Count > 1) kilkaPostaci++;
+            if (!nazwy.Contains(nazwa))
+            {
+                nazwy.Add(nazwa);
+                if (nazwa.Contains('\''))
+                {
+                    nazwa = nazwa.Replace("'", "&#39;");
+                    Console.WriteLine(nazwa);
+
+                }
+                XPathExpression queryPostaci =
+                    navigator.Compile($"/x:produktyLecznicze/x:produktLeczniczy[@nazwaPowszechnieStosowana='{nazwa}']/@postac");
+                queryPostaci.SetContext(manager);
+
+                var e = navigator.Select(queryPostaci).GetEnumerator();
+                List<string> postaciPreparatu = new List<string>();
+                while (e.MoveNext())
+                {
+                    if (!postaciPreparatu.Contains(e.Current.ToString())) postaciPreparatu.Add(e.Current.ToString());
+                }
+                if (postaciPreparatu.Count >= 2) kilkaPostaci++;
+            }
         }
-        
-        query.SetContext(manager);
-        int count = navigator.Select(query).Count;
-        Console.WriteLine("Liczba produktów leczniczych w postaci kremu, których jedyną substancją czynną jest Mometasoni furoas {0}", count );
+
+        Console.WriteLine("Liczba produktów leczniczych w postaci kremu, których jedyną substancją czynną jest Mometasoni furoas {0}", count);
         Console.WriteLine("Preparatow o tej samej nazwie pod różną postacią jest: " + kilkaPostaci);
     }
 
@@ -86,5 +97,38 @@ public class XMLReadWithXLSTDOM
         
         Console.WriteLine("Podmiot produkujący najwięcej kremów: " + maxKremow.Key + " w ilości " + maxKremow.Value);
         Console.WriteLine("Podmiot produkujący najwięcej tabletek: " + maxTabletki.Key + " w ilości " + maxTabletki.Value);
+    }
+
+    public static void ReadMostKremy(string filepath)
+    {
+        XPathDocument document = new XPathDocument(filepath);
+        XPathNavigator navigator = document.CreateNavigator();
+
+        XmlNamespaceManager manager = new XmlNamespaceManager(navigator.NameTable);
+        manager.AddNamespace("x", "http://rejestrymedyczne.ezdrowie.gov.pl/rpl/eksport-danych-v1.0");
+
+        XPathExpression queryKremy =
+            navigator.Compile("/x:produktyLecznicze/x:produktLeczniczy[@postac='Krem']/@podmiotOdpowiedzialny");
+        queryKremy.SetContext(manager);
+
+        var enumeratorKremow = navigator.Select(queryKremy).GetEnumerator()
+            ;
+        Dictionary<string, int> iloscKremow = new Dictionary<string, int>();
+
+        while (enumeratorKremow.MoveNext())
+        {
+            string podmiot = enumeratorKremow.Current.ToString();
+            if (!iloscKremow.ContainsKey(podmiot)) iloscKremow[podmiot] = 1;
+            else iloscKremow[podmiot]++;
+        }
+
+
+        var maxKremow = iloscKremow.OrderByDescending(x => x.Value);
+
+        Console.WriteLine("3 największych sprzedawców kremów: ");
+        for (int i = 0; i < 3; i++)
+        {
+            Console.WriteLine(i + ". " + maxKremow.ElementAt(i).Key + " " + maxKremow.ElementAt(i).Value);
+        }
     }
 }

@@ -18,8 +18,8 @@ public class XMLReadWithSAXApproach
         
         // zmienne pomocnicze
         int count = 0;
-        string postac = "";
-        string sc = "";
+        string postac;
+        string sc;
         Dictionary<string, List<string>> iloscPostaci = new Dictionary<string, List<string>>();
         
         // analiza każdego z węzłów dokumentu
@@ -60,9 +60,8 @@ public class XMLReadWithSAXApproach
         
         XmlReader reader = XmlReader.Create(filepath, settings);
         
-        int count = 0;
-        string postac = "";
-        string podmiot = "";
+        string postac;
+        string podmiot;
         Dictionary<string, Tuple<int, int>> statPodmiotu = new Dictionary<string, Tuple<int, int>>();
         
         while (reader.Read())
@@ -83,5 +82,39 @@ public class XMLReadWithSAXApproach
 
         Console.WriteLine("Podmiot sprzedający najwięcej kremów: " + maxKremow.Key + " w ilości " + maxKremow.Value.Item1);
         Console.WriteLine("Podmiot sprzedający najwięcej tabletek: " + maxKremow.Key + " w ilości " + maxKremow.Value.Item2);
+    }
+
+    public static void ReadMostKremy(string filepath)
+    {
+        XmlReaderSettings settings = new XmlReaderSettings();
+        settings.IgnoreComments = true;
+        settings.IgnoreProcessingInstructions = true;
+        settings.IgnoreWhitespace = true;
+
+        XmlReader reader = XmlReader.Create(filepath, settings);
+
+        string postac;
+        string podmiot;
+        Dictionary<string, int> statPodmiotu = new Dictionary<string, int>();
+
+        while (reader.Read())
+        {
+            if (reader.NodeType == XmlNodeType.Element && reader.Name
+                == "produktLeczniczy")
+            {
+                postac = reader.GetAttribute("postac");
+                podmiot = reader.GetAttribute("podmiotOdpowiedzialny");
+                if (!statPodmiotu.ContainsKey(podmiot)) statPodmiotu[podmiot] = 0;
+                if (postac == "Krem") statPodmiotu[podmiot]++;
+            }
+        }
+
+        var maxKremow = statPodmiotu.OrderByDescending(x => x.Value);
+
+        Console.WriteLine("3 największych sprzedawców kremów: ");
+        for (int i = 0; i < 3; i++)
+        {
+            Console.WriteLine(i + ". " + maxKremow.ElementAt(i).Key + " " + maxKremow.ElementAt(i).Value);
+        }
     }
 }

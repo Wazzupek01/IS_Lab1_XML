@@ -45,7 +45,6 @@ public class XMLReadWithDOMApproach
         doc.Load(filepath);
         string postac;
         string podmiot;
-        int count = 0;
         var drugs = doc.GetElementsByTagName("produktLeczniczy");
         Dictionary<string, Tuple<int, int>> statPodmiotu = new Dictionary<string, Tuple<int, int>>();
         foreach (XmlNode d in drugs)
@@ -62,5 +61,31 @@ public class XMLReadWithDOMApproach
 
         Console.WriteLine("Podmiot sprzedający najwięcej kremów: " + maxKremow.Key + " w ilości " + maxKremow.Value.Item1);
         Console.WriteLine("Podmiot sprzedający najwięcej tabletek: " + maxKremow.Key + " w ilości " + maxKremow.Value.Item2);
+    }
+
+    public static void ReadMostKremy(string filepath)
+    {
+        // odczyt zawartości dokumentu
+        XmlDocument doc = new XmlDocument();
+        doc.Load(filepath);
+        string postac;
+        string podmiot;
+        var drugs = doc.GetElementsByTagName("produktLeczniczy");
+        Dictionary<string, int> statPodmiotu = new Dictionary<string, int>();
+        foreach (XmlNode d in drugs)
+        {
+            postac = d.Attributes.GetNamedItem("postac").Value;
+            podmiot = d.Attributes.GetNamedItem("podmiotOdpowiedzialny").Value;
+            if (!statPodmiotu.ContainsKey(podmiot)) statPodmiotu[podmiot] = 0;
+            if (postac == "Krem") statPodmiotu[podmiot]++;
+        }
+
+        var maxKremow = statPodmiotu.OrderByDescending(x => x.Value);
+
+        Console.WriteLine("3 największych sprzedawców kremów: ");
+        for (int i = 0; i < 3; i++)
+        {
+            Console.WriteLine(i+ ". " + maxKremow.ElementAt(i).Key + " " + maxKremow.ElementAt(i).Value);
+        }
     }
 }
