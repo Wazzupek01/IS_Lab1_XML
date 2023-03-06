@@ -24,6 +24,7 @@ namespace desktopApp
     /// </summary>
     public partial class MainWindow : Window
     {
+        
         private Dictionary<string, List<string>> properties = new Dictionary<string, List<string>>();
         private string xmlpath;
         private XmlDocument document;
@@ -136,6 +137,17 @@ namespace desktopApp
             NazwaProduktu.Text = string.Empty;
             PostacComboBox.SelectedIndex = 0;
             RodzajComboBox.SelectedIndex = 0;
+        }
+
+        private void CancelButton_Click(object sender, RoutedEventArgs e)
+        {
+            App.Current.Shutdown();
+        }
+
+        private void Window_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ChangedButton == MouseButton.Left)
+                this.DragMove();
         }
     }
 }

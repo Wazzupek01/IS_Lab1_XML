@@ -5,37 +5,71 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:desktopApp"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
-        <ComboBox x:Name="RodzajComboBox" ItemsSource="{Binding MyDataSource}" HorizontalAlignment="Left" Margin="157,79,0,0" VerticalAlignment="Top" Width="120" RenderTransformOrigin="0.397,2.48">
+        Title="Wyszukiwarka leków" Height="450" Width="800"
+        WindowStyle="None"
+        ResizeMode="NoResize" ShowInTaskbar="False" AllowsTransparency="True"
+        Background="Transparent"
+        MouseDown="Window_MouseDown">
+    <Border BorderBrush="#121212"
+       BorderThickness="1"
+       CornerRadius="5"
+       Background="#343434">
+        
 
-        </ComboBox>
-        <Label Content="Nazwa produktu" HorizontalAlignment="Left" Margin="45,48,0,0" VerticalAlignment="Top"/>
-        <Label Content="Rodzaj preparatu" HorizontalAlignment="Left" Margin="45,79,0,0" VerticalAlignment="Top" Width="111"/>
-        <TextBox x:Name="NazwaProduktu" HorizontalAlignment="Left" Margin="157,52,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="418"/>
-        <Button Content="Znajdź pasujące" Click="Button_Click" HorizontalAlignment="Left" Margin="603,35,0,0" VerticalAlignment="Top" Width="128" RenderTransformOrigin="0.5,0.5" Background="LimeGreen" Height="44">
-            <Button.RenderTransform>
-                <TransformGroup>
-                    <ScaleTransform/>
-                    <SkewTransform/>
-                    <RotateTransform Angle="0.138"/>
-                    <TranslateTransform/>
-                </TransformGroup>
-            </Button.RenderTransform>
-        </Button>
-        <Label Content="Postać" HorizontalAlignment="Left" Margin="319,80,0,0" VerticalAlignment="Top" Width="58" Height="28"/>
-        <ComboBox x:Name="PostacComboBox" ItemsSource="{Binding MyDataSource}" HorizontalAlignment="Left" Margin="382,80,0,0" VerticalAlignment="Top" Width="193"/>
-        <Label Content="Nazwa substancji czynnej" HorizontalAlignment="Left" Margin="55,131,0,0" VerticalAlignment="Top"/>
-        <ComboBox x:Name="SubstancjaComboBox" ItemsSource="{Binding MyDataSource}" HorizontalAlignment="Left" Margin="366,131,0,0" VerticalAlignment="Top" Width="358"/>
-        <ComboBox x:Name="LiteraSubstancji" DropDownClosed="LiteraSubstancji_DropDownClosed" HorizontalAlignment="Left" Margin="297,131,0,0" VerticalAlignment="Top" Width="51"/>
-        <ListView x:Name="ListaZnalezionych" ItemsSource="{Binding MyDataSource}" Margin="45,244,44,53">
-            <ListView.View>
-                <GridView>
-                    <GridViewColumn/>
-                </GridView>
-            </ListView.View>
-        </ListView>
-        <Button x:Name="Reset" Click="Reset_Click" Content="Reset" Background="OrangeRed"  HorizontalAlignment="Left" Margin="606,85,0,0" VerticalAlignment="Top" Width="118"/>
-        <Label x:Name="LabelZnalezione" Content="Znalezione rekordy: " HorizontalAlignment="Left" Height="23" Margin="55,216,0,0" VerticalAlignment="Top" Width="144"/>
-    </Grid>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="33*"/>
+                <ColumnDefinition Width="767*"/>
+            </Grid.ColumnDefinitions>
+            <Label Content="Wyszukiwarka leków" Foreground="#656565" FontWeight="Bold" HorizontalAlignment="Left" Margin="0,10,0,0" Height="30"  VerticalAlignment="Top" Grid.Column="1"/>
+            <ComboBox Background="#434343" x:Name="RodzajComboBox" ItemsSource="{Binding MyDataSource}" HorizontalAlignment="Left" Margin="124,79,0,0" VerticalAlignment="Top" Width="120" RenderTransformOrigin="0.397,2.48" Grid.Column="1">
+            </ComboBox>
+            <Label Content="Nazwa produktu" Foreground="#878787" FontWeight="Bold" HorizontalAlignment="Left" Margin="12,52,0,0" VerticalAlignment="Top" Grid.Column="1"/>
+            <Label Content="Rodzaj preparatu" Foreground="#878787" FontWeight="Bold" HorizontalAlignment="Left" Margin="12,76,0,0" VerticalAlignment="Top" Width="111" Grid.Column="1"/>
+            <TextBox x:Name="NazwaProduktu" HorizontalAlignment="Left" Margin="124,52,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="418" Height="25" Grid.Column="1">
+                <TextBox.Resources>
+                    <Style TargetType="{x:Type Border}">
+                        <Setter Property="CornerRadius" Value="3"/>
+                    </Style>
+                </TextBox.Resources>
+            </TextBox>
+            <Button BorderThickness="0" Content="Znajdź pasujące" Click="Button_Click" FontWeight="Bold" Foreground="#323232"  HorizontalAlignment="Left" Margin="592,52,0,0" VerticalAlignment="Top" Width="128"
+                    RenderTransformOrigin="0.5,0.5" Background="#89CFF0" Height="44" Grid.Column="1">
+                
+                <Button.Resources>
+                    <Style TargetType="{x:Type Border}">
+                        <Setter Property="CornerRadius" Value="5"/>
+                    </Style>
+                </Button.Resources>
+            </Button>
+            <Label Content="Postać" Foreground="#878787" FontWeight="Bold" HorizontalAlignment="Left" Margin="286,80,0,0" VerticalAlignment="Top" Width="58" Height="28" Grid.Column="1"/>
+            <ComboBox x:Name="PostacComboBox" ItemsSource="{Binding MyDataSource}" HorizontalAlignment="Left" Margin="349,80,0,0" VerticalAlignment="Top" Width="193" Grid.Column="1"/>
+            <Label Content="Nazwa substancji" FontWeight="Bold" Foreground="#878787" HorizontalAlignment="Left" Margin="12,103,0,0" VerticalAlignment="Top" Grid.Column="1"/>
+            <ComboBox x:Name="SubstancjaComboBox" ItemsSource="{Binding MyDataSource}" HorizontalAlignment="Left" Margin="184,103,0,0" VerticalAlignment="Top" Width="358" Grid.Column="1"/>
+            <ComboBox x:Name="LiteraSubstancji" DropDownClosed="LiteraSubstancji_DropDownClosed" HorizontalAlignment="Left" Margin="124,103,0,0" VerticalAlignment="Top" Width="50" Grid.Column="1"/>
+            <ListView x:Name="ListaZnalezionych" ItemsSource="{Binding MyDataSource}" Margin="12,194,44,26" Grid.Column="1">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn/>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+            <Button x:Name="Reset" Click="Reset_Click" Content="Reset" Background="#FF6863" BorderThickness="0"  FontWeight="Bold" Foreground="#323232"  HorizontalAlignment="Left" Margin="592,99,0,0" VerticalAlignment="Top" Width="128" Grid.Column="1" Height="26">
+                <Button.Resources>
+                    <Style TargetType="{x:Type Border}">
+                        <Setter Property="CornerRadius" Value="5"/>
+                    </Style>
+                </Button.Resources>
+            </Button>
+            <Label x:Name="LabelZnalezione" Foreground="#878787" FontWeight="Bold" Content="Znalezione rekordy: " HorizontalAlignment="Left" Height="26" Margin="12,170,0,0" VerticalAlignment="Top" Width="144" Grid.Column="1"/>
+            <Button x:Name="CancelButton" Click="CancelButton_Click" Grid.Column="1" Content="x" FontSize="18" FontWeight="SemiBold" Foreground="#656565" VerticalContentAlignment="Center" BorderThickness="0" HorizontalAlignment="Left" Margin="724,10,0,0" VerticalAlignment="Top" Background="Transparent" Height="30" Width="30">
+                <Button.Resources>
+                    <Style TargetType="{x:Type Border}">
+                        <Setter Property="CornerRadius" Value="10"/>
+                    </Style>
+                </Button.Resources>
+
+            </Button>
+        </Grid>
+    </Border>
 </Window>
